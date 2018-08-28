@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react'
+import React, { PureComponent, RefObject } from 'react'
 import {
   View,
   Animated,
@@ -11,18 +11,20 @@ import {
   Platform,
   StatusBar,
   Dimensions,
-  ColorPropType,
+  EmitterSubscription,
+  ModalPropsIOS,
 } from 'react-native'
 
 import PropTypes from 'prop-types'
 
-// import colors from '@lib/colors'
-// import fonts from '@lib/fonts'
-
-const SUPPORTED_ORIENTATIONS = ['portrait', 'landscape']
+const SUPPORTED_ORIENTATIONS: ModalPropsIOS['supportedOrientations'] = ['portrait', 'landscape']
 const windowWidth = Dimensions.get('window').width
 
-const AnimatedTextInput = Animated.createAnimatedComponent(TextInput)
+class AnimatedTextInputType extends TextInput {
+  _component: TextInput
+}
+
+const AnimatedTextInput: AnimatedTextInputType = Animated.createAnimatedComponent(TextInput)
 
 /**
  * Potential props
@@ -34,13 +36,47 @@ const BACKGROUND_OPACITY = 1
 const INPUT_OFFSET_TOP = 100
 const INPUT_SCALE = 1.1
 
+type InputLayout = {
+  top: number
+  left: number
+  width: number
+  height: number
+}
+
+interface Props extends React.Props<TextInput> {
+  height: number
+  borderRadius: number
+  label: string
+  overlayColor: string
+  style: any
+}
+
+const defaultProps = {
+  label: 'Label default',
+  overlayColor: DEFAULT_OVERLAY_COLOR,
+}
+
+interface State {
+  expanded: boolean
+  showContent: boolean
+  hideModalContent: boolean
+  inputInitialStyle?: InputLayout
+}
+
 /**
  * SpotlightTextInput
  */
 
-class SpotlightTextInput extends PureComponent {
-  constructor() {
-    super()
+class SpotlightTextInput extends PureComponent<Props, State> {
+  animationProgress: Animated.Value
+  clonedInputRef: React.RefObject<AnimatedTextInputType>
+  originalInputRef: React.RefObject<AnimatedTextInputType>
+  keyboardHideListener: EmitterSubscription
+
+  static defaultProps = defaultProps
+
+  constructor(props: Props) {
+    super(props)
     this.animationProgress = new Animated.Value(0)
 
     this.state = {
@@ -63,7 +99,7 @@ class SpotlightTextInput extends PureComponent {
   }
 
   animateIn = async () => {
-    const inputInitialStyle = await this.getInputLayoutStyle()
+    const inputInitialStyle: InputLayout = await this.getInputLayoutStyle()
     this.setState({ expanded: true, showContent: true, inputInitialStyle }, () => {
       Animated.timing(this.animationProgress, {
         toValue: 1,
@@ -82,7 +118,7 @@ class SpotlightTextInput extends PureComponent {
       toValue: 0,
       duration: ANIMATION_DURATION,
       useNativeDriver: true,
-      easing: Easing.in,
+      // easing: Easing.in,
     }).start(() => {
       this.setState({ showContent: false }, () => {
         this.setState({ expanded: false })
@@ -93,21 +129,17 @@ class SpotlightTextInput extends PureComponent {
   keyboardWillShow = () => this.animateIn()
   handleKeyboardHide = () => this.animateOut()
 
-  handleOriginalInputRef = ref => {
-    this.originalInputRef = ref
-  }
-
   handleRequestClose = () => {
     this.animateOut()
   }
 
-  getInputLayoutStyle = async () => {
+  getInputLayoutStyle = async (): Promise<InputLayout> => {
     return new Promise(resolve => {
       // eslint-disable-next-line no-underscore-dangle
       this.originalInputRef.current._component.measureInWindow((left, top, width, height) => {
         resolve({ left, top, width, height })
       })
-    })
+    }) as Promise<InputLayout>
   }
 
   render() {
@@ -190,7 +222,6 @@ class SpotlightTextInput extends PureComponent {
                   {...inputProps}
                   style={[this.props.style, styles.clonedInput, inputInitialStyle, containerStyle]}
                   ref={this.clonedInputRef}
-                  onLayout={this.handleClonedInputLayout}
                 />
               </View>
             )}
@@ -208,20 +239,6 @@ class SpotlightTextInput extends PureComponent {
       </View>
     )
   }
-}
-
-SpotlightTextInput.propTypes = {
-  ...TextInput.propTypes,
-  height: PropTypes.number,
-  borderRadius: PropTypes.number,
-  label: PropTypes.string,
-  style: TextInput.propTypes.style,
-  overlayColor: ColorPropType,
-}
-
-SpotlightTextInput.defaultProps = {
-  label: 'Label default',
-  overlayColor: DEFAULT_OVERLAY_COLOR,
 }
 
 const styles = StyleSheet.create({
