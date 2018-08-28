@@ -5,12 +5,11 @@
       "packages/*"
     ],
     "nohoist": [
-      "**/react",
-      "**/react/**",
       "**/react-native",
-      "**/react-native/**",
-      "**/react-native-*",
-      "**/react-native-*/**"
+      "**/babel-preset-react-native",
+      "**/babel-preset-react-native/**",
+      "**/react-native-typescript-transformer",
+      "**/react-native-typescript-transformer/**"
     ]
   }
 }

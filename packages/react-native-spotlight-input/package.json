@@ -1,0 +1,18 @@
+{
+  "name": "react-native-spotlight-input",
+  "version": "0.0.1",
+  "description": "Simple drop-in replacement for React Native's TextInput with improved UX. Say bye to keyboard issues",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "underscopeio",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">= 15.x",
+    "react-native": ">= 0.47.x"
+  },
+  "devDependencies": {
+    "babel-preset-react-native": "4.0.0"
+  }
+}
