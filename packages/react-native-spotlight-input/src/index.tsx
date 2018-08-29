@@ -14,6 +14,7 @@ import {
   EmitterSubscription,
   ModalPropsIOS,
   TextInputProps,
+  LayoutChangeEvent,
 } from 'react-native'
 
 const SUPPORTED_ORIENTATIONS: ModalPropsIOS['supportedOrientations'] = ['portrait', 'landscape']
@@ -29,11 +30,10 @@ const AnimatedTextInput: typeof AnimatedTextInputType = Animated.createAnimatedC
  * Potential props
  */
 
-const ANIMATION_DURATION = 350
+const ANIMATION_DURATION = 500
 const DEFAULT_OVERLAY_COLOR = 'white'
 const BACKGROUND_OPACITY = 1
-const INPUT_OFFSET_TOP = 100
-const INPUT_SCALE = 1.1
+const INPUT_SCALE = 1
 
 type InputLayout = {
   top: number
@@ -44,14 +44,14 @@ type InputLayout = {
 
 interface Props extends TextInputProps {
   height?: number
-  borderRadius?: number
-  label?: string
+  header?: Element | React.Component
+  footer?: Element | React.Component
   overlayColor?: string
+  // TODO: remove this any and fix the typing issues
   style?: any
 }
 
 const defaultProps = {
-  label: 'Label default',
   overlayColor: DEFAULT_OVERLAY_COLOR,
 }
 
@@ -60,6 +60,7 @@ interface State {
   showContent: boolean
   hideModalContent: boolean
   inputInitialStyle?: InputLayout
+  headerHeight: number
 }
 
 /**
@@ -82,6 +83,7 @@ class SpotlightTextInput extends PureComponent<Props, State> {
       expanded: false,
       showContent: true,
       hideModalContent: true,
+      headerHeight: 0,
     }
 
     this.clonedInputRef = React.createRef()
@@ -97,18 +99,21 @@ class SpotlightTextInput extends PureComponent<Props, State> {
     this.keyboardHideListener.remove()
   }
 
-  animateIn = async () => {
+  handleOriginalInputPress = async () => {
     const inputInitialStyle: InputLayout = await this.getInputLayoutStyle()
-    this.setState({ expanded: true, showContent: true, inputInitialStyle }, () => {
-      Animated.timing(this.animationProgress, {
-        toValue: 1,
-        duration: ANIMATION_DURATION,
-        useNativeDriver: true,
-        easing: Easing.out(Easing.ease),
-      }).start(() => {
-        // eslint-disable-next-line no-underscore-dangle
-        this.clonedInputRef.current._component.focus()
-      })
+    this.setState({ expanded: true, showContent: true, inputInitialStyle })
+    // NOTE: animation will be performed when header layout is available
+  }
+
+  animateIn = async () => {
+    Animated.timing(this.animationProgress, {
+      toValue: 1,
+      duration: ANIMATION_DURATION,
+      useNativeDriver: true,
+      easing: Easing.out(Easing.ease),
+    }).start(() => {
+      // eslint-disable-next-line no-underscore-dangle
+      this.clonedInputRef.current._component.focus()
     })
   }
 
@@ -125,7 +130,6 @@ class SpotlightTextInput extends PureComponent<Props, State> {
     })
   }
 
-  keyboardWillShow = () => this.animateIn()
   handleKeyboardHide = () => this.animateOut()
 
   handleRequestClose = () => {
@@ -141,15 +145,28 @@ class SpotlightTextInput extends PureComponent<Props, State> {
     }) as Promise<InputLayout>
   }
 
+  handleHeaderLayout = ({
+    nativeEvent: {
+      layout: { height },
+    },
+  }: LayoutChangeEvent) => {
+    this.setState({ headerHeight: height }, this.animateIn)
+  }
+
   render() {
-    const { expanded, showContent, inputInitialStyle = { top: 0, left: 0, width: 0, height: 0 } } = this.state
+    const {
+      expanded,
+      showContent,
+      headerHeight,
+      inputInitialStyle = { top: 0, left: 0, width: 0, height: 0 },
+    } = this.state
     // NOTE: height and borderRadius are removed since are not intended to be used as props
     // eslint-disable-next-line no-unused-vars
-    const { label, height, borderRadius, overlayColor, ...inputProps } = this.props
+    const { header, height, overlayColor, ...inputProps } = this.props
 
     // TODO: Move this logic inside other component with the Modal&Content
     const offsetY = Platform.select({ android: StatusBar.currentHeight, ios: 0 })
-    const yTranslate = inputInitialStyle.top - INPUT_OFFSET_TOP
+    const yTranslate = inputInitialStyle.top - headerHeight
 
     const xTranslate = (windowWidth - inputInitialStyle.width) / 2 - inputInitialStyle.left
 
@@ -168,7 +185,7 @@ class SpotlightTextInput extends PureComponent<Props, State> {
           }),
         },
         {
-          scale: this.animationProgress.interpolate({
+          scaleX: this.animationProgress.interpolate({
             inputRange: [0, 1],
             outputRange: [1, INPUT_SCALE],
           }),
@@ -182,7 +199,6 @@ class SpotlightTextInput extends PureComponent<Props, State> {
         inputRange: [0, 0.7, 1],
         outputRange: [0, BACKGROUND_OPACITY, BACKGROUND_OPACITY],
       }),
-      // transform: [{ scale: this.animationProgress.interpolate({ inputRange: [0, 1], outputRange: [0, 20] }) }],
     }
 
     const originalInputOpacity = this.animationProgress.interpolate({
@@ -190,13 +206,12 @@ class SpotlightTextInput extends PureComponent<Props, State> {
       outputRange: [1, 0, 0],
     })
 
-    const labelStyle = {
-      // opacity: this.animationProgress,
+    const headerStyle = {
       transform: [
         {
           translateY: this.animationProgress.interpolate({
             inputRange: [0, 0.5, 1],
-            outputRange: [-100, -100, 0],
+            outputRange: [-headerHeight, -headerHeight, 0],
           }),
         },
       ],
@@ -216,7 +231,9 @@ class SpotlightTextInput extends PureComponent<Props, State> {
             {showContent && (
               <View style={StyleSheet.absoluteFill}>
                 <Animated.View style={[styles.overlay, overlayStyle]} />
-                <Animated.Text style={[styles.label, labelStyle]}>{label}</Animated.Text>
+                <Animated.View style={headerStyle} onLayout={this.handleHeaderLayout}>
+                  {header}
+                </Animated.View>
                 <AnimatedTextInput
                   {...inputProps}
                   style={[this.props.style, styles.clonedInput, inputInitialStyle, containerStyle]}
@@ -232,7 +249,7 @@ class SpotlightTextInput extends PureComponent<Props, State> {
           onChangeText={undefined}
           ref={this.originalInputRef}
         />
-        <TouchableWithoutFeedback onPress={this.animateIn}>
+        <TouchableWithoutFeedback onPress={this.handleOriginalInputPress}>
           <View style={StyleSheet.absoluteFill} />
         </TouchableWithoutFeedback>
       </View>
@@ -247,15 +264,6 @@ const styles = StyleSheet.create({
 
   overlay: {
     ...StyleSheet.absoluteFillObject,
-  },
-
-  label: {
-    fontSize: 30,
-    color: 'white',
-    backgroundColor: 'transparent',
-    textAlign: 'center',
-    fontFamily: 'Avenir',
-    marginTop: 50,
   },
 
   overrideNonLayoutProps: {
