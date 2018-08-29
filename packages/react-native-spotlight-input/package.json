@@ -2,7 +2,7 @@
   "name": "react-native-spotlight-input",
   "version": "0.0.1",
   "description": "Simple drop-in replacement for React Native's TextInput with improved UX. Say bye to keyboard issues",
-  "main": "src/index.js",
+  "main": "src/index",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

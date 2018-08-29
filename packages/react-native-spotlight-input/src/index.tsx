@@ -13,9 +13,8 @@ import {
   Dimensions,
   EmitterSubscription,
   ModalPropsIOS,
+  TextInputProps,
 } from 'react-native'
-
-import PropTypes from 'prop-types'
 
 const SUPPORTED_ORIENTATIONS: ModalPropsIOS['supportedOrientations'] = ['portrait', 'landscape']
 const windowWidth = Dimensions.get('window').width
@@ -24,7 +23,7 @@ class AnimatedTextInputType extends TextInput {
   _component: TextInput
 }
 
-const AnimatedTextInput: AnimatedTextInputType = Animated.createAnimatedComponent(TextInput)
+const AnimatedTextInput: typeof AnimatedTextInputType = Animated.createAnimatedComponent(TextInput)
 
 /**
  * Potential props
@@ -43,12 +42,12 @@ type InputLayout = {
   height: number
 }
 
-interface Props extends React.Props<TextInput> {
-  height: number
-  borderRadius: number
-  label: string
-  overlayColor: string
-  style: any
+interface Props extends TextInputProps {
+  height?: number
+  borderRadius?: number
+  label?: string
+  overlayColor?: string
+  style?: any
 }
 
 const defaultProps = {
