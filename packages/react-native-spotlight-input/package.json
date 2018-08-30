@@ -9,7 +9,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "prepublish": "build"
+    "prepublish": "yarn build"
   },
   "author": "underscopeio",
   "license": "MIT",
