@@ -113,7 +113,7 @@ class SpotlightTextInput extends PureComponent<Props, State> {
       easing: Easing.out(Easing.ease),
     }).start(() => {
       // eslint-disable-next-line no-underscore-dangle
-      this.clonedInputRef.current._component.focus()
+      this.clonedInputRef && this.clonedInputRef.current && this.clonedInputRef.current._component.focus()
     })
   }
 
@@ -220,28 +220,30 @@ class SpotlightTextInput extends PureComponent<Props, State> {
     return (
       <View style={[this.props.style, styles.overrideNonLayoutProps]}>
         {expanded && (
-          <Modal
-            animationType="none"
-            presentationStyle="overFullScreen"
-            transparent={true}
-            visible={true}
-            onRequestClose={this.handleRequestClose}
-            supportedOrientations={SUPPORTED_ORIENTATIONS}
-          >
-            {showContent && (
-              <View style={StyleSheet.absoluteFill}>
-                <Animated.View style={[styles.overlay, overlayStyle]} />
-                <Animated.View style={headerStyle} onLayout={this.handleHeaderLayout}>
-                  {header}
-                </Animated.View>
-                <AnimatedTextInput
-                  {...inputProps}
-                  style={[this.props.style, styles.clonedInput, inputInitialStyle, containerStyle]}
-                  ref={this.clonedInputRef}
-                />
-              </View>
-            )}
-          </Modal>
+          <TouchableWithoutFeedback onPress={this.handleRequestClose}>
+            <Modal
+              animationType="none"
+              presentationStyle="overFullScreen"
+              transparent={true}
+              visible={true}
+              onRequestClose={this.handleRequestClose}
+              supportedOrientations={SUPPORTED_ORIENTATIONS}
+            >
+              {showContent && (
+                <View style={StyleSheet.absoluteFill}>
+                  <Animated.View style={[styles.overlay, overlayStyle]} />
+                  <Animated.View style={headerStyle} onLayout={this.handleHeaderLayout}>
+                    {header}
+                  </Animated.View>
+                  <AnimatedTextInput
+                    {...inputProps}
+                    style={[this.props.style, styles.clonedInput, inputInitialStyle, containerStyle]}
+                    ref={this.clonedInputRef}
+                  />
+                </View>
+              )}
+            </Modal>
+          </TouchableWithoutFeedback>
         )}
         <AnimatedTextInput
           {...inputProps}
