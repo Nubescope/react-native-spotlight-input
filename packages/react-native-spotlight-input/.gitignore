@@ -60,4 +60,4 @@ buck-out/
 *.jsbundle
 
 # Typescript generated files
-dist/
+# dist/
