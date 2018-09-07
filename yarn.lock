@@ -4264,6 +4264,10 @@ react-is@^16.4.1:
   version "16.4.2"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.4.2.tgz#84891b56c2b6d9efdee577cc83501dfc5ecead88"
 
+react-native-spotlight-input@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/react-native-spotlight-input/-/react-native-spotlight-input-0.0.3.tgz#f6759b2e70da36fe6b35bd73bf2cad7f8ac82a61"
+
 react-native-typescript-transformer@1.2.10:
   version "1.2.10"
   resolved "https://registry.yarnpkg.com/react-native-typescript-transformer/-/react-native-typescript-transformer-1.2.10.tgz#6f76c1449028cdeafa184b533301ecd547367ed1"

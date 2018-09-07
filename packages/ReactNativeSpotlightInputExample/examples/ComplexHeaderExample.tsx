@@ -1,18 +1,27 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, View, Image } from 'react-native'
+import { StyleSheet, Text, View, Image, Dimensions } from 'react-native'
 
 import TextInput from 'react-native-spotlight-input'
 
-interface Props {}
+const IMAGE_SIZE = Dimensions.get('window').height / 4
+
+interface Props {
+  label?: string
+}
 
 interface State {
   text: string
 }
 
-const Header = () => (
+interface HeaderProps {
+  inputValue: string
+}
+
+const Header = ({ inputValue }: HeaderProps) => (
   <View style={styles.header}>
     <Image source={require('./twitter-logo.png')} style={styles.image} />
-    <Text style={styles.headerLabel}>Your twitter account</Text>
+    <Text style={styles.headerLabel}>Your twitter account is</Text>
+    <Text style={styles.accountLabel}>@{inputValue}</Text>
   </View>
 )
 
@@ -21,14 +30,19 @@ export default class ComplexHeaderExample extends Component<Props, State> {
     text: '',
   }
 
+  static defaultProps = {
+    label: 'Custom header with image',
+  }
+
   handleChangeText = (text: string) => this.setState({ text })
 
   render() {
+    const { label } = this.props
     const { text } = this.state
 
     return (
       <View style={styles.container}>
-        <Text style={styles.label}>Using a header with image</Text>
+        <Text style={styles.label}>{label}</Text>
         <TextInput
           style={styles.input}
           keyboardType="twitter"
@@ -37,9 +51,9 @@ export default class ComplexHeaderExample extends Component<Props, State> {
           autoCorrect={false}
           onChangeText={this.handleChangeText}
           value={text}
-          header={<Header />}
-          overlayColor="#0496FF"
           selectionColor="#047BD1"
+          overlayColor="#0496FF"
+          header={Header}
         />
       </View>
     )
@@ -61,23 +75,22 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    width: 200,
+    width: 220,
     height: 50,
-    backgroundColor: 'lightgray',
-    color: 'black',
+    backgroundColor: '#e8e8e8',
+    color: '#333',
     fontSize: 17,
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
     fontFamily: 'Avenir',
-    borderRadius: 8,
+    borderRadius: 25,
     paddingVertical: 0,
   },
 
   header: {
+    marginTop: '10%',
+    marginBottom: 15,
     justifyContent: 'center',
     alignItems: 'center',
-    // backgroundColor: 'red',
-    // paddingTop: 70,
-    // paddingBottom: 30,
   },
 
   headerLabel: {
@@ -86,12 +99,22 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     textAlign: 'center',
     fontFamily: 'Avenir',
-    marginBottom: 10,
+    marginBottom: 5,
+  },
+
+  accountLabel: {
+    fontSize: 25,
+    fontWeight: '700',
+    color: 'white',
+    backgroundColor: 'transparent',
+    textAlign: 'center',
+    fontFamily: 'Avenir',
+    marginBottom: 5,
   },
 
   image: {
-    width: 200,
-    height: 200,
+    width: IMAGE_SIZE,
+    height: IMAGE_SIZE,
     tintColor: 'white',
   },
 })

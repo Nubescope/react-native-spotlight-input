@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, ScrollView } from 'react-native'
 
 import TextInput from 'react-native-spotlight-input'
 
@@ -21,14 +21,16 @@ export default class MultilineExample extends Component<Props, State> {
 
     return (
       <View>
-        <Text style={styles.label}>Multiline</Text>
+        <Text style={styles.label}>Custom footer</Text>
         <TextInput
           style={styles.input}
           onChangeText={this.handleChangeText}
           value={text}
-          header={<Text style={styles.header}>Multiline</Text>}
+          header={() => <Text style={styles.header}>Write a poem</Text>}
+          footer={({ inputValue }: { inputValue: string }) => <Text style={styles.poem}>{inputValue}</Text>}
           overlayColor="#D65780"
           selectionColor="#B04869"
+          autoCorrect
           multiline
         />
       </View>
@@ -49,8 +51,8 @@ const styles = StyleSheet.create({
   input: {
     width: 300,
     height: 100,
-    backgroundColor: 'lightgray',
-    color: 'black',
+    backgroundColor: '#e8e8e8',
+    color: '#333',
     fontSize: 17,
     paddingHorizontal: 10,
     fontFamily: 'Avenir',
@@ -66,5 +68,15 @@ const styles = StyleSheet.create({
     fontFamily: 'Avenir',
     paddingTop: 70,
     paddingBottom: 30,
+  },
+
+  poem: {
+    fontSize: 18,
+    fontStyle: 'italic',
+    color: 'white',
+    backgroundColor: 'transparent',
+    textAlign: 'center',
+    fontFamily: 'Avenir',
+    marginTop: 15,
   },
 })

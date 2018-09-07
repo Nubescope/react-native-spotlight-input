@@ -26,7 +26,7 @@ export default class UncenteredExample extends Component<Props, State> {
           style={styles.input}
           onChangeText={this.handleChangeText}
           value={text}
-          header={<Text style={styles.header}>Not centered input</Text>}
+          header={() => <Text style={styles.header}>Will be centered</Text>}
           overlayColor="#6457A6"
           selectionColor="#5B5097"
         />
@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     margin: 20,
+    marginBottom: 10,
     alignItems: 'center',
   },
 
@@ -53,8 +54,8 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     height: 50,
-    backgroundColor: 'lightgray',
-    color: 'black',
+    backgroundColor: '#e8e8e8',
+    color: '#333',
     fontSize: 17,
     paddingHorizontal: 10,
     fontFamily: 'Avenir',

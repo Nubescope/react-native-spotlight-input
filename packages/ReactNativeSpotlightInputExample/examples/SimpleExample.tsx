@@ -20,8 +20,8 @@ export default class PhoneExample extends Component<Props, State> {
     const { text } = this.state
 
     return (
-      <View>
-        <Text style={styles.label}>Simple example</Text>
+      <View style={styles.container}>
+        <Text style={styles.label}>Basic example with label</Text>
         <TextInput
           style={styles.input}
           keyboardType="numeric"
@@ -30,9 +30,9 @@ export default class PhoneExample extends Component<Props, State> {
           autoCorrect={false}
           onChangeText={this.handleChangeText}
           value={text}
-          header={<Text style={styles.header}>Your phone number</Text>}
-          overlayColor="#72B01D"
-          selectionColor="#5E9118"
+          header={() => <Text style={styles.header}>Your phone number</Text>}
+          overlayColor="#F5FCFFf4"
+          selectionColor="#888"
         />
       </View>
     )
@@ -40,6 +40,10 @@ export default class PhoneExample extends Component<Props, State> {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+  },
+
   label: {
     fontSize: 20,
     textAlign: 'center',
@@ -50,24 +54,23 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    width: 200,
-    height: 50,
-    backgroundColor: 'lightgray',
-    color: 'black',
-    fontSize: 17,
-    paddingHorizontal: 10,
+    width: 150,
+    height: 40,
+    backgroundColor: '#e8e8e8',
+    color: '#333',
+    fontSize: 20,
     fontFamily: 'Avenir',
-    borderRadius: 8,
+    textAlign: 'center',
     paddingVertical: 0,
   },
 
   header: {
     fontSize: 25,
-    color: 'white',
+    color: '#333',
     backgroundColor: 'transparent',
     textAlign: 'center',
     fontFamily: 'Avenir',
-    paddingTop: 70,
-    paddingBottom: 30,
+    paddingTop: '15%',
+    paddingBottom: '10%',
   },
 })

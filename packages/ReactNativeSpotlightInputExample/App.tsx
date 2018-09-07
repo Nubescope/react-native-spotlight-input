@@ -21,15 +21,14 @@ export default class App extends Component<Props> {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>Distraction free text input!</Text>
-        <Text style={styles.description}>
-          No matter how long a form is, or the input position, it will work out of the box
-        </Text>
+        <Text style={styles.welcome}>Stop fighting with the keyboard!</Text>
+        <Text style={styles.description}>Simple drop-in replacement for TextInput</Text>
         <ScrollView contentContainerStyle={styles.contentContainer}>
           <SimpleExample />
           <ComplexHeaderExample />
           <MultilineExample />
           <UncenteredExample />
+          <ComplexHeaderExample label="Another twitter account" />
         </ScrollView>
       </View>
     )
@@ -45,7 +44,6 @@ const styles = StyleSheet.create({
   },
 
   contentContainer: {
-    flex: 1,
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
@@ -56,14 +54,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     margin: 5,
     marginTop: 50,
+    marginHorizontal: 20,
     fontFamily: 'Avenir Next',
     fontWeight: '500',
   },
 
   description: {
-    fontSize: 18,
+    fontSize: 16,
     textAlign: 'center',
     margin: 5,
+    marginBottom: 20,
+    marginHorizontal: 10,
     fontFamily: 'Avenir Next',
     fontWeight: '400',
   },
