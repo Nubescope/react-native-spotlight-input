@@ -19,6 +19,8 @@
     "babel-jest": "23.4.2",
     "babel-preset-react-native": "5.0.2",
     "jest": "23.5.0",
+    "detox": "^9.0.1",
+    "mocha": "^5.2.0",
     "react-native-typescript-transformer": "1.2.10",
     "react-test-renderer": "16.4.1",
     "ts-jest": "23.1.4",
@@ -41,5 +43,15 @@
     "modulePaths": [
       "<rootDir>"
     ]
+  },
+  "detox": {
+    "configurations": {
+      "ios.sim.debug": {
+        "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/ReactNativeSpotlightInputExample.app",
+        "build": "xcodebuild -project ios/ReactNativeSpotlightInputExample.xcodeproj -scheme ReactNativeSpotlightInputExample -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
+        "type": "ios.simulator",
+        "name": "iPhone 7"
+      }
+    }
   }
 }
