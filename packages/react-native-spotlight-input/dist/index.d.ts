@@ -6,18 +6,20 @@ declare class AnimatedTextInputType extends TextInput {
 declare type InputLayout = {
     top: number;
     left: number;
-    width: number;
-    height: number;
+    width?: number;
+    height?: number;
 };
 export interface SpotlightTextInputHeaderProps {
     inputValue: string;
 }
+declare type SpotlightTextInputAnimationConfig = Partial<Animated.TimingAnimationConfig> & {
+    toValue: never;
+};
 export interface SpotlightTextInputProps extends TextInputProps {
-    height?: number;
     header?: typeof React.Component;
     footer?: typeof React.Component;
     overlayColor?: string;
-    animationDuration?: number;
+    animationConfig?: SpotlightTextInputAnimationConfig;
     style?: any;
 }
 interface State {
@@ -37,7 +39,9 @@ declare class SpotlightTextInput extends PureComponent<SpotlightTextInputProps, 
     keyboardHideListener: EmitterSubscription;
     static defaultProps: {
         overlayColor: string;
-        animationDuration: number;
+        animationConfig: {
+            duration: number;
+        };
     };
     constructor(props: SpotlightTextInputProps);
     componentDidMount(): void;

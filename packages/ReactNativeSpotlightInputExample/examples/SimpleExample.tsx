@@ -9,7 +9,7 @@ interface State {
   text: string
 }
 
-export default class PhoneExample extends Component<Props, State> {
+export default class SimpleExample extends Component<Props, State> {
   state = {
     text: '',
   }
@@ -31,8 +31,8 @@ export default class PhoneExample extends Component<Props, State> {
           onChangeText={this.handleChangeText}
           value={text}
           header={() => <Text style={styles.header}>Your phone number</Text>}
-          overlayColor="#F5FCFFf4"
           selectionColor="#888"
+          overlayColor="#F5FCFFf4"
         />
       </View>
     )
