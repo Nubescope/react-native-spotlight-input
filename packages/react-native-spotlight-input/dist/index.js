@@ -72,6 +72,7 @@ class SpotlightTextInput extends PureComponent {
             }
         };
         this._handleRequestClose = () => {
+            Keyboard.dismiss();
             this.collapse();
         };
         this._getInputLayoutStyle = () => __awaiter(this, void 0, void 0, function* () {

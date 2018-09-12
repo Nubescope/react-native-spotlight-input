@@ -155,6 +155,7 @@ class SpotlightTextInput extends PureComponent<SpotlightTextInputProps, State> {
   }
 
   _handleRequestClose = () => {
+    Keyboard.dismiss()
     this.collapse()
   }
 
