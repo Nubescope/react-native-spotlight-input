@@ -81,7 +81,7 @@ A component (could be either function or class component) that takes `inputValue
 Will be rendered after the `TextInput` when focused.
 
 ```js
-const Footer = ({ inputValue }) => <Text>You've written this: {inputValue}</Text>
+const Footer = ({ inputValue }) => <Text>You have written this: {inputValue}</Text>
 
 const WithFooter = () => (
   <TextInput
