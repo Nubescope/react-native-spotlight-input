@@ -122,6 +122,8 @@ Default value is
 }
 ```
 
+Notice that `useNativeDriver` and `toValue` **cannot be overwritten**.
+
 #### `collapseOnKeyboardHide`
 
 Decides wether or not the component should collapse on keyboard hide. Default value is `true`.
@@ -178,8 +180,6 @@ class ControlledInputExample extends Component {
   }
 }
 ```
-
-Notice that `useNativeDriver` and `toValue` **cannot be overwritten**.
 
 ## Examples
 
