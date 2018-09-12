@@ -8,10 +8,8 @@ However, that covers a lot of use cases.
 <img src="./demo.gif" width="320" alt="Stop fighting with the keyboard!">
 
 ## Try it!
-
-> COMING SOON!  
-> For some reason, snack is not able to import the latest version or `react-native-spotlight-input` (0.0.8) and the previous one has an issue.  
-> Once solved, we'll publish the link ;)
+Here is a snack so you can give it a try!
+https://snack.expo.io/@gaguirre/rnspotlightinput-demo
 
 ## Installation
 
