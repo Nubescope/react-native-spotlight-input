@@ -16,10 +16,11 @@ declare type SpotlightTextInputAnimationConfig = Partial<Animated.TimingAnimatio
     toValue: never;
 };
 export interface SpotlightTextInputProps extends TextInputProps {
-    header?: typeof React.Component;
-    footer?: typeof React.Component;
+    header?: React.SFC<SpotlightTextInputHeaderProps> | React.ComponentClass<SpotlightTextInputHeaderProps>;
+    footer?: React.SFC<SpotlightTextInputHeaderProps> | React.ComponentClass<SpotlightTextInputHeaderProps>;
     overlayColor?: string;
     animationConfig?: SpotlightTextInputAnimationConfig;
+    collapseOnKeyboardHide?: boolean;
     style?: any;
 }
 interface State {
@@ -39,6 +40,7 @@ declare class SpotlightTextInput extends PureComponent<SpotlightTextInputProps, 
     keyboardHideListener: EmitterSubscription;
     static defaultProps: {
         overlayColor: string;
+        collapseOnKeyboardHide: boolean;
         animationConfig: {
             duration: number;
         };
@@ -46,13 +48,13 @@ declare class SpotlightTextInput extends PureComponent<SpotlightTextInputProps, 
     constructor(props: SpotlightTextInputProps);
     componentDidMount(): void;
     componentWillUnmount(): void;
-    handleOriginalInputPress: () => Promise<void>;
-    animateIn: () => Promise<void>;
-    animateOut: () => void;
-    handleKeyboardHide: () => void;
-    handleRequestClose: () => void;
-    getInputLayoutStyle: () => Promise<InputLayout>;
-    handleHeaderLayout: ({ nativeEvent: { layout: { height }, }, }: LayoutChangeEvent) => void;
+    expand: () => Promise<{}>;
+    collapse: () => Promise<{}>;
+    _handleOriginalInputPress: () => Promise<void>;
+    _handleKeyboardHide: () => void;
+    _handleRequestClose: () => void;
+    _getInputLayoutStyle: () => Promise<InputLayout>;
+    _handleHeaderLayout: ({ nativeEvent: { layout: { height }, }, }: LayoutChangeEvent) => void;
     render(): JSX.Element;
 }
 export default SpotlightTextInput;

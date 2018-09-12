@@ -31,6 +31,7 @@ const BACKGROUND_OPACITY = 1;
 const INPUT_SCALE = 1;
 const defaultProps = {
     overlayColor: DEFAULT_OVERLAY_COLOR,
+    collapseOnKeyboardHide: true,
     animationConfig: {
         duration: DEFAULT_ANIMATION_DURATION,
     },
@@ -41,36 +42,45 @@ const defaultProps = {
 class SpotlightTextInput extends PureComponent {
     constructor(props) {
         super(props);
-        this.handleOriginalInputPress = () => __awaiter(this, void 0, void 0, function* () {
-            const inputInitialStyle = yield this.getInputLayoutStyle();
-            this.setState({ expanded: true, showContent: true, inputInitialStyle });
-            // NOTE: animation will be performed when header layout is available
-        });
-        this.animateIn = () => __awaiter(this, void 0, void 0, function* () {
+        this.expand = () => {
             const { animationConfig } = this.props;
-            Animated.timing(this.animationProgress, Object.assign({}, animationConfig, { toValue: 1, useNativeDriver: true })).start(() => {
-                this.clonedInputRef && this.clonedInputRef.current && this.clonedInputRef.current._component.focus();
-            });
-        });
-        this.animateOut = () => {
-            const { animationConfig } = this.props;
-            Animated.timing(this.animationProgress, Object.assign({}, animationConfig, { toValue: 0, useNativeDriver: true })).start(() => {
-                this.setState({ showContent: false }, () => {
-                    this.setState({ expanded: false });
+            return new Promise(resolve => {
+                Animated.timing(this.animationProgress, Object.assign({}, animationConfig, { toValue: 1, useNativeDriver: true })).start(() => {
+                    this.clonedInputRef && this.clonedInputRef.current && this.clonedInputRef.current._component.focus();
+                    resolve();
                 });
             });
         };
-        this.handleKeyboardHide = () => this.animateOut();
-        this.handleRequestClose = () => {
-            this.animateOut();
+        this.collapse = () => {
+            const { animationConfig } = this.props;
+            return new Promise(resolve => {
+                Animated.timing(this.animationProgress, Object.assign({}, animationConfig, { toValue: 0, useNativeDriver: true })).start(() => {
+                    this.setState({ showContent: false }, () => {
+                        this.setState({ expanded: false }, resolve);
+                    });
+                });
+            });
         };
-        this.getInputLayoutStyle = () => __awaiter(this, void 0, void 0, function* () {
+        this._handleOriginalInputPress = () => __awaiter(this, void 0, void 0, function* () {
+            const inputInitialStyle = yield this._getInputLayoutStyle();
+            this.setState({ expanded: true, showContent: true, inputInitialStyle });
+            // NOTE: animation will be performed when header layout is available
+        });
+        this._handleKeyboardHide = () => {
+            if (this.props.collapseOnKeyboardHide && this.state.expanded) {
+                this.collapse();
+            }
+        };
+        this._handleRequestClose = () => {
+            this.collapse();
+        };
+        this._getInputLayoutStyle = () => __awaiter(this, void 0, void 0, function* () {
             return new Promise(resolve => {
                 this.originalInputRef.current._component.measureInWindow((left, top, width, height) => resolve({ left, top, width, height }));
             });
         });
-        this.handleHeaderLayout = ({ nativeEvent: { layout: { height }, }, }) => {
-            this.setState({ headerHeight: height }, this.animateIn);
+        this._handleHeaderLayout = ({ nativeEvent: { layout: { height }, }, }) => {
+            this.setState({ headerHeight: height }, this.expand);
         };
         this.animationProgress = new Animated.Value(0);
         this.state = {
@@ -84,7 +94,7 @@ class SpotlightTextInput extends PureComponent {
     }
     componentDidMount() {
         const keyboardHideEvent = Platform.select({ ios: 'keyboardWillHide', android: 'keyboardDidHide' });
-        this.keyboardHideListener = Keyboard.addListener(keyboardHideEvent, this.handleKeyboardHide);
+        this.keyboardHideListener = Keyboard.addListener(keyboardHideEvent, this._handleKeyboardHide);
     }
     componentWillUnmount() {
         this.keyboardHideListener.remove();
@@ -145,21 +155,21 @@ class SpotlightTextInput extends PureComponent {
             ],
         };
         return (<View style={[this.props.style, styles.overrideNonLayoutProps]}>
-        {expanded && (<TouchableWithoutFeedback onPress={this.handleRequestClose}>
-            <Modal animationType="none" presentationStyle="overFullScreen" transparent={true} visible={true} onRequestClose={this.handleRequestClose} supportedOrientations={SUPPORTED_ORIENTATIONS}>
-              {showContent && (<View style={StyleSheet.absoluteFill}>
+        {expanded && (<Modal animationType="none" presentationStyle="overFullScreen" transparent={true} visible={true} onRequestClose={this._handleRequestClose} supportedOrientations={SUPPORTED_ORIENTATIONS}>
+            {showContent && (<View style={StyleSheet.absoluteFill}>
+                <TouchableWithoutFeedback onPress={this._handleRequestClose}>
                   <Animated.View style={[styles.overlay, overlayStyle]}/>
-                  <Animated.View style={headerStyle} onLayout={this.handleHeaderLayout}>
-                    {Header && <Header inputValue={this.props.value}/>}
-                  </Animated.View>
-                  <AnimatedTextInput {...inputProps} style={[this.props.style, styles.clonedInput, inputInitialStyle, inputStyle]} ref={this.clonedInputRef}/>
+                </TouchableWithoutFeedback>
+                <Animated.View style={headerStyle} onLayout={this._handleHeaderLayout}>
+                  {Header && <Header inputValue={this.props.value}/>}
+                </Animated.View>
+                <AnimatedTextInput {...inputProps} style={[this.props.style, styles.clonedInput, inputInitialStyle, inputStyle]} ref={this.clonedInputRef}/>
 
-                  {Footer && (<Animated.View style={[{ marginTop: inputInitialStyle.height }, footerStyle]}>
-                      <Footer inputValue={this.props.value}/>
-                    </Animated.View>)}
-                </View>)}
-            </Modal>
-          </TouchableWithoutFeedback>)}
+                {Footer && (<Animated.View style={[{ marginTop: inputInitialStyle.height }, footerStyle]}>
+                    <Footer inputValue={this.props.value}/>
+                  </Animated.View>)}
+              </View>)}
+          </Modal>)}
 
         <AnimatedTextInput {...inputProps} style={[
             inputProps.style,
@@ -172,7 +182,7 @@ class SpotlightTextInput extends PureComponent {
             },
         ]} onChangeText={undefined} ref={this.originalInputRef}/>
 
-        {!expanded && (<TouchableWithoutFeedback onPress={this.handleOriginalInputPress}>
+        {!expanded && (<TouchableWithoutFeedback onPress={this._handleOriginalInputPress}>
             <View style={StyleSheet.absoluteFill}/>
           </TouchableWithoutFeedback>)}
       </View>);

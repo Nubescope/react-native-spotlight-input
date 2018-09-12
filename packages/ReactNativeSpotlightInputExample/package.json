@@ -9,7 +9,7 @@
   "dependencies": {
     "react": "16.4.1",
     "react-native": "0.56.0",
-    "react-native-spotlight-input": "^0.0.3"
+    "react-native-spotlight-input": "^0.0.6"
   },
   "devDependencies": {
     "@types/jest": "23.3.1",

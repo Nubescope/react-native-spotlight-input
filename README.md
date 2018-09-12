@@ -120,8 +120,70 @@ Default value is
 }
 ```
 
+#### `collapseOnKeyboardHide`
+
+Decides wether or not the component should collapse on keyboard hide. Default value is `true`.
+
+```js
+const NoCollapseOnKeyboardHide = () => (
+  <TextInput
+    // ...other props
+    collapseOnKeyboardHide={false}
+  />
+)
+```
+
+### Methods
+
+Besides the props, you can control it using the component ref.
+
+#### `expand()`
+
+Calling `componentRef.expand()` you can show the _expanded_ mode of the component
+
+#### `collapse()`
+
+Calling `componentRef.collapse()` you can go back to the _collapsed_ mode of the component
+
+#### Example using both methods
+
+```js
+class ControlledInputExample extends Component {
+  constructor() {
+    super()
+    this.componentRef = React.createRef()
+  }
+
+  handleExpandButtonPress = () => {
+    this.componentRef.expand()
+  }
+
+  handleCollapseButtonPress = () => {
+    this.componentRef.collapse()
+  }
+
+  render() {
+    return (
+      <View>
+        <TextInput
+          ref={this.componentRef}
+          footer={() => <Button title="Collapse" onPress={this.handleCollapseButtonPress} />}
+          collapseOnKeyboardHide={false}
+        />
+        <Button title="Expand" onPress={this.handleExpandButtonPress} />
+      </View>
+    )
+  }
+}
+```
+
 Notice that `useNativeDriver` and `toValue` **cannot be overwritten**.
 
 ## Examples
 
 See the `ReactNativeSpotlightInputExample` folder in `packages` to find more detailed examples.
+
+## Caveats
+
+- In DEV mode you can't use the developer tools when input is focused due to [this RN issue](https://github.com/facebook/react-native/issues/17986)
+- If input has borders then those will be visible during transition to focused state
