@@ -9,7 +9,9 @@ However, that covers a lot of use cases.
 
 ## Try it!
 
-We've created [this snack]() so you can give it a try!
+> COMING SOON!  
+> For some reason, snack is not able to import the latest version or `react-native-spotlight-input` (0.0.8) and the previous one has an issue.  
+> Once solved, we'll publish the link ;)
 
 ## Installation
 
